@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070707">
+  <meta name="description" content="صفحة شخصية غامضة بطابع Retro Noir — قابلة للتعديل بالكامل من ملف واحد.">
+  <title>MY NAME — Personal File</title>
+
+  <!-- =========================================================
+       الخطوط:
+       يمكنك حذف هذا السطر واستخدام خطوط محلية من مجلد fonts إذا أردت.
+       ========================================================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Special+Elite&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       PERSONAL FILE — SINGLE FILE EDITION
+       كل شيء هنا في ملف واحد: HTML + CSS + JavaScript.
+       لتشغيل الموقع: احفظ الملف باسم index.html وافتحه مباشرة.
+       ========================================================= */
+
+    :root{
+      --bg:#050505;
+      --bg-2:#0b0b0b;
+      --panel:#101010;
+      --panel-2:#151515;
+      --paper:#d6d0c4;
+      --paper-dark:#9b9488;
+      --text:#e9e6df;
+      --muted:#97938d;
+      --red:#8f171c;
+      --red-bright:#c02b31;
+      --red-soft:rgba(143,23,28,.22);
+      --line:rgba(255,255,255,.10);
+      --line-red:rgba(192,43,49,.45);
+      --shadow:0 30px 90px rgba(0,0,0,.65);
+      --serif:"Cinzel", Georgia, serif;
+      --body:"Manrope", Arial, sans-serif;
+      --type:"Special Elite", "Courier New", monospace;
+      --max:1240px;
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{
+      background:
+        radial-gradient(circle at 50% -10%,rgba(143,23,28,.12),transparent 38%),
+        linear-gradient(180deg,#030303 0%,#080808 45%,#050505 100%);
+      color:var(--text);
+      font-family:var(--body);
+      overflow-x:hidden;
+      min-width:320px;
+    }
+    body.locked{overflow:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    img{max-width:100%;display:block}
+    ::selection{background:var(--red);color:#fff}
+
+    /* =========================================================
+       طبقة الـ Film Grain:
+       لا نستخدم صورة خارجية، بل Noise خفيف مولد بـ CSS.
+       ========================================================= */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-50%;
+      z-index:9990;
+      pointer-events:none;
+      opacity:.055;
+      background-image:
+        repeating-radial-gradient(circle at 17% 22%,#fff 0 1px,transparent 1px 4px),
+        repeating-radial-gradient(circle at 80% 70%,#000 0 1px,transparent 1px 5px);
+      background-size:7px 7px,11px 11px;
+      mix-blend-mode:screen;
+      animation:grain .22s steps(2) infinite;
+    }
+    @keyframes grain{
+      0%{transform:translate(0,0)}
+      25%{transform:translate(2%, -1%)}
+      50%{transform:translate(-1%, 2%)}
+      75%{transform:translate(1%, 1%)}
+      100%{transform:translate(-2%, -2%)}
+    }
+
+    /* زر تقليل الحركة — Accessibility */
+    body.reduce-motion *,
+    body.reduce-motion *::before,
+    body.reduce-motion *::after{
+      animation-duration:.01ms!important;
+      animation-iteration-count:1!important;
+      transition-duration:.01ms!important;
+      scroll-behavior:auto!important;
+    }
+
+    /* =========================================================
+       INTRO
+       ========================================================= */
+    .intro{
+      position:fixed;
+      inset:0;
+      z-index:10000;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at center,rgba(143,23,28,.10),transparent 32%),
+        #020202;
+      transition:opacity 1s var(--ease),visibility 1s var(--ease);
+    }
+    .intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+    .intro-inner{text-align:center;padding:24px}
+    .intro-kicker{
+      color:#7d7870;
+      font-family:var(--type);
+      letter-spacing:.35em;
+      font-size:.75rem;
+      margin-bottom:18px;
+      direction:ltr;
+    }
+    .intro-name{
+      font-family:var(--serif);
+      font-size:clamp(2.5rem,8vw,7rem);
+      letter-spacing:.12em;
+      line-height:1;
+      text-transform:uppercase;
+      color:#eee;
+      text-shadow:0 0 45px rgba(255,255,255,.08);
+      direction:ltr;
+    }
+    .intro-sub{
+      margin:22px auto 30px;
+      color:#aaa59b;
+      font-family:var(--type);
+      font-size:.9rem;
+      direction:ltr;
+    }
+    .enter{
+      position:relative;
+      min-width:170px;
+      padding:15px 30px;
+      border:1px solid rgba(255,255,255,.24);
+      background:transparent;
+      color:#eee;
+      cursor:pointer;
+      letter-spacing:.28em;
+      font-family:var(--type);
+      transition:.35s var(--ease);
+      overflow:hidden;
+      direction:ltr;
+    }
+    .enter::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:var(--red);
+      transform:translateX(-102%);
+      transition:.45s var(--ease);
+      z-index:-1;
+    }
+    .enter:hover,.enter:focus-visible{
+      border-color:var(--red-bright);
+      transform:translateY(-3px);
+      outline:none;
+    }
+    .enter:hover::before,.enter:focus-visible::before{transform:translateX(0)}
+
+    /* =========================================================
+       TOP BAR / NAV
+       ========================================================= */
+    .nav{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:5000;
+      padding:18px 24px;
+      transition:.4s var(--ease);
+      border-bottom:1px solid transparent;
+    }
+    .nav.scrolled{
+      background:rgba(4,4,4,.88);
+      backdrop-filter:blur(16px);
+      border-color:var(--line);
+      box-shadow:0 15px 45px rgba(0,0,0,.28);
+    }
+    .nav-inner{
+      width:min(var(--max),100%);
+      margin:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:25px;
+      direction:ltr;
+    }
+    .brand{
+      display:flex;align-items:center;gap:11px;
+      font-family:var(--serif);
+      letter-spacing:.16em;
+      font-size:.86rem;
+      direction:ltr;
+      white-space:nowrap;
+    }
+    .brand-mark{
+      width:30px;height:30px;
+      border:1px solid var(--red-bright);
+      border-radius:50%;
+      display:grid;place-items:center;
+      color:var(--red-bright);
+      font-family:var(--type);
+      font-size:.65rem;
+      box-shadow:0 0 18px rgba(192,43,49,.14);
+    }
+    .nav-links{display:flex;align-items:center;gap:5px}
+    .nav-links a{
+      padding:10px 13px;
+      color:#aaa7a0;
+      font-family:var(--type);
+      font-size:.7rem;
+      letter-spacing:.1em;
+      direction:ltr;
+      transition:.25s;
+    }
+    .nav-links a:hover,.nav-links a.active{color:#fff}
+    .nav-links a::after{
+      content:"";
+      display:block;
+      height:1px;
+      background:var(--red-bright);
+      transform:scaleX(0);
+      transform-origin:left;
+      transition:.3s;
+      margin-top:4px;
+    }
+    .nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+    .nav-tools{display:flex;align-items:center;gap:8px}
+    .round-btn{
+      width:42px;height:42px;
+      border-radius:50%;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.3);
+      color:#ddd;
+      display:grid;place-items:center;
+      cursor:pointer;
+      transition:.3s var(--ease);
+      direction:ltr;
+    }
+    .round-btn:hover,.round-btn:focus-visible{
+      border-color:var(--red-bright);
+      color:#fff;
+      transform:translateY(-2px);
+      outline:none;
+    }
+    .round-btn svg{width:17px;height:17px}
+    .hamburger{display:none}
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+    .hero{
+      position:relative;
+      min-height:100svh;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .hero-bg{
+      position:absolute;inset:-5%;
+      z-index:-4;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.67) 48%,rgba(0,0,0,.9) 100%),
+        radial-gradient(circle at 68% 40%,rgba(143,23,28,.2),transparent 30%),
+        url("assets/images/hero.jpg") center/cover no-repeat,
+        #111;
+      filter:brightness(.55) saturate(.65);
+      transform:scale(1.06);
+      animation:heroZoom 16s ease-in-out infinite alternate;
+    }
+    /* إذا لم توجد hero.jpg سيظل التدرج الأسود يعمل بشكل طبيعي. */
+    @keyframes heroZoom{
+      from{transform:scale(1.06)}
+      to{transform:scale(1.12)}
+    }
+    .hero-vignette{
+      position:absolute;inset:0;z-index:-2;
+      background:
+        radial-gradient(ellipse at center,transparent 25%,rgba(0,0,0,.35) 72%,rgba(0,0,0,.88) 100%),
+        linear-gradient(0deg,var(--bg) 0%,transparent 25%,transparent 75%,rgba(0,0,0,.7) 100%);
+      pointer-events:none;
+    }
+    .hero-content{
+      width:min(var(--max),100%);
+      margin:auto;
+      padding:150px 24px 110px;
+      direction:ltr;
+    }
+    .case-line{
+      display:flex;align-items:center;gap:12px;
+      color:#8f8b84;
+      font-family:var(--type);
+      font-size:.7rem;
+      letter-spacing:.15em;
+      margin-bottom:25px;
+    }
+    .case-line::before{content:"";width:45px;height:1px;background:var(--red-bright)}
+    .hero-title{
+      max-width:950px;
+      font-family:var(--serif);
+      font-weight:500;
+      text-transform:uppercase;
+      font-size:clamp(3.4rem,9vw,9.5rem);
+      line-height:.88;
+      letter-spacing:.03em;
+      color:#f0eee9;
+    }
+    .hero-title span{color:#9d2429}
+    .hero-quote{
+      max-width:680px;
+      margin:34px 0 38px;
+      font-family:var(--type);
+      color:#bbb7ae;
+      font-size:clamp(.9rem,1.5vw,1.1rem);
+      line-height:1.9;
+      border-left:1px solid var(--red-bright);
+      padding-left:18px;
+    }
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:50px;
+      padding:0 22px;
+      border:1px solid var(--line);
+      cursor:pointer;
+      transition:.3s var(--ease);
+      font-family:var(--type);
+      font-size:.72rem;
+      letter-spacing:.09em;
+      direction:ltr;
+    }
+    .btn-primary{background:#eeeae2;color:#090909;border-color:#eeeae2}
+    .btn-primary:hover{background:var(--red-bright);color:#fff;border-color:var(--red-bright);transform:translateY(-3px)}
+    .btn-ghost{background:rgba(0,0,0,.28);color:#ddd}
+    .btn-ghost:hover{border-color:var(--red-bright);transform:translateY(-3px)}
+    .scroll-mark{
+      position:absolute;
+      left:50%;bottom:25px;
+      transform:translateX(-50%);
+      display:flex;flex-direction:column;align-items:center;gap:9px;
+      color:#6f6b64;
+      font-family:var(--type);
+      font-size:.6rem;
+      letter-spacing:.2em;
+      direction:ltr;
+    }
+    .scroll-mark i{width:1px;height:45px;background:linear-gradient(#8f171c,transparent);display:block}
+
+    /* =========================================================
+       GENERAL SECTIONS
+       ========================================================= */
+    .section{
+      width:min(var(--max),100%);
+      margin:auto;
+      padding:120px 24px;
+      position:relative;
+    }
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:30px;
+      margin-bottom:55px;
+      direction:ltr;
+    }
+    .eyebrow{
+      color:#8d8981;
+      font-family:var(--type);
+      font-size:.67rem;
+      letter-spacing:.16em;
+      margin-bottom:12px;
+      direction:ltr;
+    }
+    .section-title{
+      font-family:var(--serif);
+      font-weight:500;
+      font-size:clamp(2.1rem,5vw,4.7rem);
+      line-height:1;
+      letter-spacing:.03em;
+      direction:ltr;
+      text-transform:uppercase;
+    }
+    .section-note{
+      max-width:390px;
+      color:#8d8981;
+      font-family:var(--type);
+      font-size:.76rem;
+      line-height:1.9;
+      direction:ltr;
+    }
+    .rule{height:1px;background:var(--line);position:relative}
+    .rule::before{content:"";position:absolute;left:0;top:0;width:90px;height:1px;background:var(--red-bright)}
+
+    /* =========================================================
+       ABOUT — CASE FILE
+       ========================================================= */
+    .case-grid{
+      display:grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap:45px;
+      direction:ltr;
+      align-items:start;
+    }
+    .profile-wrap{
+      position:relative;
+      padding:25px;
+      background:
+        linear-gradient(135deg,rgba(214,208,196,.08),rgba(214,208,196,.02)),
+        #10100f;
+      border:1px solid rgba(214,208,196,.13);
+      box-shadow:var(--shadow);
+      transform:rotate(-1deg);
+    }
+    .profile-wrap::before{
+      content:"CONFIDENTIAL";
+      position:absolute;
+      top:17px;right:15px;
+      font-family:var(--type);
+      color:rgba(192,43,49,.7);
+      font-size:.6rem;
+      letter-spacing:.12em;
+      transform:rotate(4deg);
+    }
+    .profile-frame{
+      aspect-ratio:4/5;
+      overflow:hidden;
+      border:8px solid #171717;
+      outline:1px solid rgba(214,208,196,.15);
+      background:#191919;
+      position:relative;
+    }
+    .profile-frame::after{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(140deg,transparent 40%,rgba(255,255,255,.08),transparent 60%);
+      pointer-events:none;
+    }
+    .profile-frame img{
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(1) contrast(1.15) brightness(.78);
+    }
+    .file-stamp{
+      margin-top:15px;
+      display:flex;justify-content:space-between;
+      color:#807b72;
+      font-family:var(--type);
+      font-size:.63rem;
+      direction:ltr;
+    }
+    .case-paper{
+      background:
+        linear-gradient(rgba(255,255,255,.025),rgba(0,0,0,.05)),
+        repeating-linear-gradient(0deg,transparent 0 27px,rgba(214,208,196,.035) 28px),
+        #121212;
+      border:1px solid var(--line);
+      padding:35px;
+      position:relative;
+      box-shadow:var(--shadow);
+    }
+    .case-paper::before{
+      content:"CASE FILE / 001";
+      position:absolute;
+      top:15px;right:18px;
+      font-family:var(--type);
+      font-size:.58rem;
+      color:#77736d;
+      letter-spacing:.1em;
+      direction:ltr;
+    }
+    .case-list{margin-top:25px;display:grid;gap:0}
+    .case-row{
+      display:grid;
+      grid-template-columns:140px 1fr;
+      gap:20px;
+      padding:17px 0;
+      border-bottom:1px dashed rgba(255,255,255,.1);
+      direction:ltr;
+    }
+    .case-row:last-child{border-bottom:0}
+    .case-label{
+      color:#77736c;
+      font-family:var(--type);
+      font-size:.67rem;
+      letter-spacing:.08em;
+    }
+    .case-value{color:#d5d1c9;font-size:.93rem;line-height:1.8}
+    .status{color:#d5d1c9;display:flex;align-items:center;gap:9px}
+    .status-dot{width:7px;height:7px;background:#9e2429;border-radius:50%;box-shadow:0 0 14px #c02b31}
+
+    /* =========================================================
+       MY WORLD — CIRCULAR ICONS
+       ========================================================= */
+    .world-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+      direction:ltr;
+    }
+    .world-card{
+      position:relative;
+      min-height:300px;
+      padding:26px 20px;
+      border:1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 25%,rgba(143,23,28,.16),transparent 36%),
+        linear-gradient(160deg,#141414,#090909);
+      overflow:hidden;
+      transition:.5s var(--ease);
+      isolation:isolate;
+    }
+    .world-card::before{
+      content:"";
+      position:absolute;inset:auto -30% -35% -30%;
+      height:65%;
+      background:radial-gradient(circle,rgba(192,43,49,.16),transparent 62%);
+      filter:blur(25px);
+      z-index:-1;
+      transition:.5s;
+    }
+    .world-card:hover{transform:translateY(-10px);border-color:var(--line-red);box-shadow:0 25px 55px rgba(0,0,0,.45)}
+    .world-card:hover::before{transform:scale(1.35)}
+    .world-index{
+      color:#625f59;
+      font-family:var(--type);
+      font-size:.62rem;
+      direction:ltr;
+    }
+    .world-icon{
+      width:78px;height:78px;
+      border:1px solid rgba(214,208,196,.22);
+      border-radius:50%;
+      display:grid;place-items:center;
+      margin:45px auto 35px;
+      color:#d7d2c8;
+      background:rgba(0,0,0,.28);
+      transition:.45s var(--ease);
+      box-shadow:inset 0 0 25px rgba(255,255,255,.025);
+    }
+    .world-card:hover .world-icon{
+      border-color:var(--red-bright);
+      color:#fff;
+      transform:rotate(10deg) scale(1.08);
+      box-shadow:0 0 30px rgba(192,43,49,.15);
+    }
+    .world-icon svg{width:29px;height:29px}
+    .world-card h3{
+      text-align:center;
+      font-family:var(--serif);
+      font-size:1.1rem;
+      letter-spacing:.08em;
+      direction:ltr;
+    }
+    .world-card p{
+      color:#77736c;
+      font-family:var(--type);
+      font-size:.67rem;
+      line-height:1.8;
+      text-align:center;
+      margin-top:12px;
+      direction:ltr;
+    }
+
+    /* =========================================================
+       GALLERY
+       ========================================================= */
+    .gallery{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:17px;
+      direction:ltr;
+    }
+    .photo{
+      position:relative;
+      overflow:hidden;
+      border:8px solid #ddd7ca;
+      background:#ddd7ca;
+      box-shadow:0 20px 45px rgba(0,0,0,.4);
+      cursor:pointer;
+      transform:rotate(var(--r));
+      transition:.45s var(--ease);
+      color:#181818;
+    }
+    .photo:nth-child(1){grid-column:span 5;--r:-1.3deg}
+    .photo:nth-child(2){grid-column:span 4;--r:1.7deg;margin-top:30px}
+    .photo:nth-child(3){grid-column:span 3;--r:-.7deg}
+    .photo:nth-child(4){grid-column:span 4;--r:1deg;margin-top:-12px}
+    .photo:nth-child(5){grid-column:span 3;--r:-1.8deg;margin-top:20px}
+    .photo:nth-child(6){grid-column:span 5;--r:.6deg}
+    .photo img{
+      width:100%;height:100%;min-height:220px;object-fit:cover;
+      filter:sepia(.28) grayscale(.35) contrast(1.08);
+      transition:.6s var(--ease);
+    }
+    .photo:hover{transform:rotate(0) translateY(-8px) scale(1.015);z-index:3}
+    .photo:hover img{transform:scale(1.07);filter:sepia(.1) grayscale(.1) contrast(1.05)}
+    .photo figcaption{
+      padding:9px 8px 6px;
+      background:#ddd7ca;
+      font-family:var(--type);
+      font-size:.61rem;
+      direction:ltr;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+
+    /* =========================================================
+       LIGHT / L — فقط عند وضع صور المستخدم المرخصة.
+       ========================================================= */
+    .minds{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      direction:ltr;
+    }
+    .mind{
+      min-height:560px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:#0d0d0d;
+      isolation:isolate;
+    }
+    .mind::after{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(0deg,rgba(0,0,0,.94) 0%,rgba(0,0,0,.1) 62%);
+      z-index:1;
+    }
+    .mind.light{--mind-accent:#a3242a}
+    .mind.l{--mind-accent:#77838c}
+    .mind img{
+      position:absolute;inset:0;
+      width:100%;height:100%;object-fit:cover;
+      filter:grayscale(.85) contrast(1.2) brightness(.58);
+      transition:.8s var(--ease);
+      z-index:0;
+    }
+    .mind:hover img{transform:scale(1.06);filter:grayscale(.45) contrast(1.1) brightness(.66)}
+    .mind::before{
+      content:"";
+      position:absolute;
+      width:240px;height:240px;
+      border-radius:50%;
+      background:var(--mind-accent);
+      opacity:.15;
+      filter:blur(80px);
+      right:-60px;top:-50px;
+      z-index:0;
+    }
+    .mind-content{
+      position:absolute;
+      left:30px;right:30px;bottom:30px;
+      z-index:2;
+      direction:ltr;
+    }
+    .mind-number{
+      font-family:var(--type);
+      font-size:.65rem;
+      color:#aaa;
+      letter-spacing:.12em;
+    }
+    .mind h3{
+      font-family:var(--serif);
+      font-size:clamp(2rem,5vw,4.6rem);
+      font-weight:500;
+      margin:7px 0;
+    }
+    .mind p{
+      max-width:440px;
+      color:#aaa;
+      font-family:var(--type);
+      font-size:.7rem;
+      line-height:1.9;
+    }
+    .mind-tag{
+      display:inline-block;
+      margin-top:18px;
+      border:1px solid color-mix(in srgb,var(--mind-accent),white 10%);
+      padding:8px 11px;
+      font-family:var(--type);
+      font-size:.58rem;
+      color:#ccc;
+    }
+
+    /* =========================================================
+       WATCH / VIDEO
+       ========================================================= */
+    .watch{
+      position:relative;
+      border:1px solid var(--line);
+      padding:10px;
+      background:#0a0a0a;
+      box-shadow:var(--shadow);
+      direction:ltr;
+    }
+    .watch video{
+      width:100%;
+      display:block;
+      aspect-ratio:16/9;
+      object-fit:cover;
+      background:
+        radial-gradient(circle,rgba(143,23,28,.13),transparent 30%),
+        #080808;
+    }
+    .video-overlay-label{
+      position:absolute;
+      top:25px;left:25px;
+      z-index:2;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.55);
+      backdrop-filter:blur(8px);
+      padding:8px 11px;
+      font-family:var(--type);
+      font-size:.6rem;
+      letter-spacing:.1em;
+    }
+    .watch-note{
+      padding:15px 7px 3px;
+      color:#77736c;
+      font-family:var(--type);
+      font-size:.62rem;
+    }
+
+    /* =========================================================
+       MUSIC PLAYER + VISUALIZER
+       ========================================================= */
+    .music-layout{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      direction:ltr;
+    }
+    .music-box,.visualizer-box{
+      border:1px solid var(--line);
+      background:linear-gradient(145deg,#121212,#090909);
+      padding:28px;
+      min-height:380px;
+    }
+    .music-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      direction:ltr;
+    }
+    .music-kicker{font-family:var(--type);font-size:.6rem;color:#777;letter-spacing:.1em}
+    .track-name{
+      margin-top:10px;
+      font-family:var(--serif);
+      font-size:1.5rem;
+      direction:ltr;
+    }
+    .disc{
+      width:72px;height:72px;
+      border-radius:50%;
+      border:1px solid #333;
+      background:
+        radial-gradient(circle,#0b0b0b 0 7%,#a8a39a 7% 8%,#181818 8% 20%,#aaa59c 20% 21%,#151515 21% 42%,#999 42% 43%,#111 43%);
+      box-shadow:0 0 0 7px #0a0a0a,0 0 0 8px #2a2a2a;
+      animation:spin 4s linear infinite paused;
+      flex:none;
+    }
+    .music-box.playing .disc{animation-play-state:running}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .progress-area{margin:42px 0 22px}
+    .progress{
+      width:100%;
+      height:4px;
+      appearance:none;
+      accent-color:var(--red-bright);
+      cursor:pointer;
+      direction:ltr;
+    }
+    .times{
+      display:flex;justify-content:space-between;
+      color:#777;
+      font-family:var(--type);
+      font-size:.58rem;
+      margin-top:8px;
+      direction:ltr;
+    }
+    .player-controls{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      direction:ltr;
+    }
+    .control{
+      width:43px;height:43px;border-radius:50%;
+      border:1px solid var(--line);
+      background:#0a0a0a;color:#ddd;
+      display:grid;place-items:center;
+      cursor:pointer;
+      transition:.25s;
+    }
+    .control:hover{border-color:var(--red-bright);transform:translateY(-2px)}
+    .control.main{width:56px;height:56px;background:#e9e6df;color:#080808;border-color:#e9e6df}
+    .volume-row{
+      display:flex;align-items:center;gap:10px;
+      margin-top:24px;
+      color:#777;
+      direction:ltr;
+    }
+    .volume{width:100%;accent-color:#999}
+    .playlist{
+      margin-top:25px;
+      border-top:1px solid var(--line);
+      padding-top:10px;
+    }
+    .track{
+      width:100%;
+      display:flex;align-items:center;gap:13px;
+      padding:13px 0;
+      border:0;border-bottom:1px dashed rgba(255,255,255,.07);
+      background:none;color:#8d8981;
+      cursor:pointer;
+      text-align:left;
+      direction:ltr;
+      transition:.2s;
+    }
+    .track:hover,.track.active{color:#fff}
+    .track-no{font-family:var(--type);font-size:.6rem;color:#555;width:22px}
+    .track-name-small{font-family:var(--type);font-size:.67rem}
+    .visualizer-box{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .visualizer-title{
+      font-family:var(--serif);
+      font-size:1.6rem;
+      direction:ltr;
+    }
+    canvas{width:100%;height:230px;display:block}
+    .sound-state{
+      font-family:var(--type);
+      color:#68645e;
+      font-size:.62rem;
+      direction:ltr;
+    }
+
+    /* =========================================================
+       EASTER EGG / SECRET FILE
+       ========================================================= */
+    .secret{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:9000;
+      background:rgba(0,0,0,.88);
+      backdrop-filter:blur(10px);
+      place-items:center;
+      padding:25px;
+    }
+    .secret.show{display:grid}
+    .secret-card{
+      width:min(560px,100%);
+      background:#111;
+      border:1px solid rgba(192,43,49,.5);
+      padding:35px;
+      box-shadow:0 30px 100px #000;
+      position:relative;
+      direction:ltr;
+    }
+    .secret-card::before{
+      content:"RESTRICTED / EYES ONLY";
+      color:#a3242a;
+      font:10px var(--type);
+      letter-spacing:.15em;
+    }
+    .secret-card h3{font:2.4rem var(--serif);margin:15px 0}
+    .secret-card p{color:#999;font:13px/2 var(--type)}
+    .close-secret{
+      position:absolute;right:15px;top:15px;
+      width:35px;height:35px;border:1px solid #333;background:none;color:#aaa;cursor:pointer
+    }
+
+    /* =========================================================
+       LIGHTBOX
+       ========================================================= */
+    .lightbox{
+      position:fixed;inset:0;
+      z-index:8500;
+      background:rgba(0,0,0,.94);
+      display:grid;place-items:center;
+      padding:30px;
+      opacity:0;visibility:hidden;
+      transition:.35s;
+    }
+    .lightbox.show{opacity:1;visibility:visible}
+    .lightbox img{
+      max-width:min(1100px,94vw);
+      max-height:80vh;
+      object-fit:contain;
+      border:8px solid #ddd7ca;
+      box-shadow:0 30px 100px #000;
+    }
+    .lightbox-caption{
+      position:absolute;left:30px;right:30px;bottom:22px;
+      display:flex;justify-content:space-between;
+      color:#aaa;
+      font-family:var(--type);
+      font-size:.65rem;
+      direction:ltr;
+    }
+    .lightbox-close{
+      position:absolute;top:20px;right:20px;
+      width:44px;height:44px;border-radius:50%;
+      border:1px solid #444;background:#080808;color:#ddd;cursor:pointer;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    footer{
+      border-top:1px solid var(--line);
+      padding:80px 24px 35px;
+      text-align:center;
+      direction:ltr;
+    }
+    .end{
+      font-family:var(--serif);
+      font-size:clamp(2rem,7vw,6rem);
+      color:#e5e2db;
+      letter-spacing:.06em;
+    }
+    .footer-note{
+      margin-top:15px;
+      color:#77736c;
+      font:12px/2 var(--type);
+    }
+    .footer-copy{
+      margin-top:55px;
+      color:#4e4b46;
+      font:10px var(--type);
+      letter-spacing:.12em;
+    }
+
+    /* =========================================================
+       SCROLL REVEAL
+       ========================================================= */
+    .reveal{
+      opacity:0;
+      transform:translateY(35px);
+      filter:blur(8px);
+      transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease);
+    }
+    .reveal.visible{opacity:1;transform:none;filter:none}
+    .delay-1{transition-delay:.08s}.delay-2{transition-delay:.16s}.delay-3{transition-delay:.24s}
+    .delay-4{transition-delay:.32s}.delay-5{transition-delay:.4s}
+
+    /* =========================================================
+       CUSTOM CURSOR — Desktop فقط
+       ========================================================= */
+    .cursor,.cursor-ring{
+      position:fixed;
+      top:0;left:0;
+      pointer-events:none;
+      z-index:12000;
+      border-radius:50%;
+      transform:translate(-50%,-50%);
+      opacity:0;
+    }
+    .cursor{
+      width:5px;height:5px;background:#fff;
+      transition:transform .1s,opacity .2s;
+    }
+    .cursor-ring{
+      width:28px;height:28px;
+      border:1px solid rgba(255,255,255,.55);
+      transition:width .25s,height .25s,border-color .25s,opacity .2s;
+    }
+    body.cursor-ready{cursor:none}
+    body.cursor-ready a,body.cursor-ready button{cursor:none}
+    .cursor-ring.hover{width:48px;height:48px;border-color:var(--red-bright)}
+    .cursor-ring.click{width:20px;height:20px;border-color:#fff}
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (max-width:1050px){
+      .world-grid{grid-template-columns:repeat(3,1fr)}
+      .case-grid{grid-template-columns:1fr 1fr}
+      .gallery .photo{grid-column:span 6}
+    }
+
+    @media (max-width:800px){
+      .nav{padding:13px 15px}
+      .nav-links{
+        position:absolute;
+        top:70px;left:15px;right:15px;
+        display:flex;flex-direction:column;align-items:stretch;
+        padding:10px;
+        background:rgba(7,7,7,.96);
+        border:1px solid var(--line);
+        backdrop-filter:blur(18px);
+        opacity:0;visibility:hidden;
+        transform:translateY(-10px);
+        transition:.3s var(--ease);
+      }
+      .nav-links.open{opacity:1;visibility:visible;transform:none}
+      .nav-links a{padding:13px}
+      .hamburger{display:grid}
+      .hero-content{padding:140px 20px 90px}
+      .section{padding:85px 20px}
+      .section-head{display:block;margin-bottom:35px}
+      .section-note{margin-top:18px}
+      .case-grid,.music-layout,.minds{grid-template-columns:1fr}
+      .world-grid{grid-template-columns:repeat(2,1fr)}
+      .profile-wrap{max-width:520px;margin:auto}
+      .mind{min-height:500px}
+      .gallery .photo{grid-column:span 6}
+      .photo:nth-child(2),.photo:nth-child(4),.photo:nth-child(5){margin-top:0}
+    }
+
+    @media (max-width:500px){
+      .brand{font-size:.7rem}
+      .nav-tools .round-btn{width:38px;height:38px}
+      .intro-name{font-size:2.5rem}
+      .hero-title{font-size:clamp(3rem,18vw,5.2rem)}
+      .hero-quote{font-size:.75rem}
+      .world-grid{grid-template-columns:1fr 1fr;gap:9px}
+      .world-card{min-height:240px;padding:18px 12px}
+      .world-icon{width:62px;height:62px;margin:30px auto 24px}
+      .world-card h3{font-size:.9rem}
+      .world-card p{font-size:.58rem}
+      .case-paper{padding:23px 18px}
+      .case-row{grid-template-columns:95px 1fr;gap:10px}
+      .case-value{font-size:.8rem}
+      .gallery{gap:10px}
+      .gallery .photo{grid-column:span 12}
+      .photo{border-width:6px}
+      .photo img{min-height:240px}
+      .mind{min-height:430px}
+      .mind-content{left:20px;right:20px;bottom:20px}
+      .music-box,.visualizer-box{padding:20px}
+      .lightbox{padding:15px}
+      .lightbox img{border-width:5px}
+      .lightbox-caption{left:15px;right:15px;bottom:12px}
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+        scroll-behavior:auto!important;
+        transition-duration:.01ms!important;
+      }
+    }
+  </style>
+</head>
+
+<body class="locked">
+
+  <!-- =========================================================
+       شاشة البداية
+       ========================================================= -->
+  <div class="intro" id="intro" aria-label="شاشة البداية">
+    <div class="intro-inner">
+      <div class="intro-kicker">PERSONAL ARCHIVE / 001</div>
+      <div class="intro-name" id="introName">MY NAME</div>
+      <div class="intro-sub">Welcome to my world.</div>
+      <button class="enter" id="enterBtn" type="button" aria-label="دخول إلى الموقع">ENTER</button>
+    </div>
+  </div>
+
+  <!-- مؤشر الماوس للكمبيوتر -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- =========================================================
+       Navigation
+       ========================================================= -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="العودة إلى البداية">
+        <span class="brand-mark">X</span>
+        <span id="brandName">MY NAME</span>
+      </a>
+
+      <nav class="nav-links" id="navLinks" aria-label="التنقل الرئيسي">
+        <a href="#home">HOME</a>
+        <a href="#about">ABOUT</a>
+        <a href="#world">WORLD</a>
+        <a href="#gallery">GALLERY</a>
+        <a href="#minds">MINDS</a>
+        <a href="#music">MUSIC</a>
+      </nav>
+
+      <div class="nav-tools">
+        <button class="round-btn" id="motionBtn" type="button" aria-label="إيقاف أو تشغيل الحركة" title="Reduce motion">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+        </button>
+        <button class="round-btn hamburger" id="menuBtn" type="button" aria-label="فتح القائمة" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- =======================================================
+         HERO
+         ======================================================= -->
+    <section class="hero" id="home">
+      <div class="hero-bg" id="heroBg"></div>
+      <div class="hero-vignette"></div>
+
+      <div class="hero-content">
+        <div class="case-line reveal">CASE FILE: PERSONAL / ACTIVE</div>
+
+        <h1 class="hero-title reveal delay-1" id="heroName">MY <span>NAME</span></h1>
+
+        <p class="hero-quote reveal delay-2" id="heroQuote">
+          Just another mind in a world full of noise.
+        </p>
+
+        <div class="hero-actions reveal delay-3">
+          <a class="btn btn-primary" href="#about">OPEN FILE</a>
+          <a class="btn btn-ghost" href="#world">ENTER MY WORLD</a>
+        </div>
+      </div>
+
+      <div class="scroll-mark" aria-hidden="true">
+        <span>SCROLL</span><i></i>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         ABOUT
+         ======================================================= -->
+    <section class="section" id="about">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">01 / SUBJECT PROFILE</div>
+          <h2 class="section-title">ABOUT ME</h2>
+        </div>
+        <p class="section-note">A personal archive. A few facts, interests and fragments that define the person behind this file.</p>
+      </div>
+
+      <div class="rule reveal"></div>
+
+      <div class="case-grid" style="margin-top:42px">
+        <div class="profile-wrap reveal delay-1">
+          <div class="profile-frame">
+            <!-- ضع صورتك هنا باسم profile.jpg أو غيّر المسار من الإعدادات أسفل الملف -->
+            <img id="profileImage" src="assets/images/profile.jpg" alt="الصورة الشخصية لصاحب الموقع"
+                 onerror="this.style.opacity='0'">
+          </div>
+          <div class="file-stamp">
+            <span>SUBJECT / <span id="fileName">MY NAME</span></span>
+            <span>ARCHIVE 2026</span>
+          </div>
+        </div>
+
+        <div class="case-paper reveal delay-2">
+          <div class="eyebrow">CLASSIFIED INFORMATION</div>
+          <div class="case-list" id="caseList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         MY WORLD
+         ======================================================= -->
+    <section class="section" id="world">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">02 / INTERESTS</div>
+          <h2 class="section-title">MY WORLD</h2>
+        </div>
+        <p class="section-note">The things I build, watch, listen to and explore when nobody is looking.</p>
+      </div>
+
+      <div class="world-grid" id="worldGrid"></div>
+    </section>
+
+    <!-- =======================================================
+         GALLERY
+         ======================================================= -->
+    <section class="section" id="gallery">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">03 / VISUAL ARCHIVE</div>
+          <h2 class="section-title">MEMORIES / GALLERY</h2>
+        </div>
+        <p class="section-note">Replace these files with your own photographs. Click any frame to open the archive.</p>
+      </div>
+
+      <div class="gallery" id="galleryGrid"></div>
+    </section>
+
+    <!-- =======================================================
+         THE TWO MINDS
+         ملاحظة: الصور هنا مجرد placeholders محلية.
+         لا يتم تضمين أي صور أنمي داخل المشروع.
+         ======================================================= -->
+    <section class="section" id="minds">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">04 / PSYCHOLOGICAL ARCHIVE</div>
+          <h2 class="section-title">THE TWO MINDS</h2>
+        </div>
+        <p class="section-note">A visual homage to the contrast between two fictional minds. Replace the artwork with files you are licensed to use.</p>
+      </div>
+
+      <div class="minds">
+        <article class="mind light reveal delay-1">
+          <img id="lightImage" src="assets/images/light.jpg" alt="صورة Light Yagami — ملف قابل للاستبدال"
+               onerror="this.style.opacity='0'">
+          <div class="mind-content">
+            <div class="mind-number">SUBJECT 01 / LIGHT</div>
+            <h3 id="lightName">LIGHT YAGAMI</h3>
+            <p id="lightDescription">A fictional character represented here only as a visual reference for the site's psychological noir aesthetic.</p>
+            <span class="mind-tag">RED / STRATEGY / DUALITY</span>
+          </div>
+        </article>
+
+        <article class="mind l reveal delay-2">
+          <img id="lImage" src="assets/images/l.jpg" alt="صورة L Lawliet — ملف قابل للاستبدال"
+               onerror="this.style.opacity='0'">
+          <div class="mind-content">
+            <div class="mind-number">SUBJECT 02 / L</div>
+            <h3 id="lName">L LAWLIET</h3>
+            <p id="lDescription">A fictional character represented here only as a visual reference for the detective / investigation aesthetic.</p>
+            <span class="mind-tag">BLUE-GRAY / LOGIC / MYSTERY</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         WATCH
+         ======================================================= -->
+    <section class="section" id="watch">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">05 / VISUAL RECORD</div>
+          <h2 class="section-title">WATCH</h2>
+        </div>
+        <p class="section-note">Use only videos you own or have permission to display. The player works with a local MP4 file.</p>
+      </div>
+
+      <div class="watch reveal">
+        <div class="video-overlay-label">VIDEO RECORD / 001</div>
+        <video id="mainVideo" controls playsinline preload="metadata" poster="assets/images/video-poster.jpg">
+          <source src="assets/video/video.mp4" type="video/mp4">
+          المتصفح لا يدعم تشغيل الفيديو.
+        </video>
+        <div class="watch-note">SOURCE: USER OWNED / LICENSED MEDIA ONLY</div>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         MUSIC
+         ======================================================= -->
+    <section class="section" id="music">
+      <div class="section-head reveal">
+        <div>
+          <div class="eyebrow">06 / AUDIO ARCHIVE</div>
+          <h2 class="section-title">MY SOUNDTRACK</h2>
+        </div>
+        <p class="section-note">Music is OFF by default. Add direct audio files or permitted streaming/embed sources in the settings.</p>
+      </div>
+
+      <div class="music-layout">
+        <div class="music-box reveal delay-1" id="musicBox">
+          <div class="music-top">
+            <div>
+              <div class="music-kicker">NOW PLAYING</div>
+              <div class="track-name" id="trackTitle">Music Off</div>
+            </div>
+            <div class="disc" aria-hidden="true"></div>
+          </div>
+
+          <div class="progress-area">
+            <input class="progress" id="progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="تقدم الأغنية">
+            <div class="times"><span id="currentTime">00:00</span><span id="duration">00:00</span></div>
+          </div>
+
+          <div class="player-controls">
+            <button class="control" id="prevBtn" type="button" aria-label="الأغنية السابقة">◀◀</button>
+            <button class="control main" id="playBtn" type="button" aria-label="تشغيل أو إيقاف الموسيقى">▶</button>
+            <button class="control" id="nextBtn" type="button" aria-label="الأغنية التالية">▶▶</button>
+          </div>
+
+          <div class="volume-row">
+            <span>VOL</span>
+            <input class="volume" id="volume" type="range" min="0" max="1" value=".75" step=".01" aria-label="مستوى الصوت">
+          </div>
+
+          <div class="playlist" id="playlist"></div>
+          <audio id="audio" preload="metadata"></audio>
+        </div>
+
+        <div class="visualizer-box reveal delay-2">
+          <div>
+            <div class="music-kicker">LIVE SIGNAL</div>
+            <div class="visualizer-title">AUDIO VISUALIZER</div>
+          </div>
+          <canvas id="visualizer" aria-label="موجات صوتية للموسيقى"></canvas>
+          <div class="sound-state" id="soundState">MUSIC OFF / READY</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =======================================================
+       SECRET FILE
+       ======================================================= -->
+  <div class="secret" id="secret" role="dialog" aria-modal="true" aria-labelledby="secretTitle">
+    <div class="secret-card">
+      <button class="close-secret" id="closeSecret" type="button" aria-label="إغلاق الملف السري">×</button>
+      <div>RESTRICTED / EYES ONLY</div>
+      <h3 id="secretTitle">Interesting...</h3>
+      <p id="secretText">You found a hidden file. Nothing here changes the main experience. Some archives are simply meant to be discovered.</p>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       LIGHTBOX
+       ======================================================= -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="عرض الصورة">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="إغلاق الصورة">×</button>
+    <img id="lightboxImage" src="" alt="">
+    <div class="lightbox-caption">
+      <span id="lightboxTitle">ARCHIVE</span>
+      <span id="lightboxDate">2026</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="end">END OF FILE</div>
+    <div class="footer-note">Thanks for visiting my world.</div>
+    <div class="footer-copy">© <span id="footerName">MY NAME</span> / PERSONAL ARCHIVE</div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       ============================================================
+       WEBSITE SETTINGS
+       ============================================================
+       أهم جزء في الملف:
+       عدّل البيانات الموجودة هنا بدل البحث داخل مئات الأسطر.
+
+       ملاحظة مهمة:
+       - الاسم والوصف والمعلومات والصور سهلة التغيير من هنا.
+       - الصور المحلية تكون داخل assets/images/
+       - الفيديو المحلي يكون داخل assets/video/
+       - الأغاني المحلية تكون داخل assets/music/
+       - إذا استخدمت روابط خارجية، تأكد أن المصدر يسمح بالتشغيل المباشر.
+       ============================================================ */
+
+    const SITE_CONFIG = {
+
+      // ===== الهوية الأساسية =====
+      name: "MOAZYOURE",
+      heroQuote: "Just another mind in a world full of noise.",
+      introText: "Welcome to my world.",
+
+      // ===== الصور =====
+      images: {
+        profile: "assets/images/profile.jpg",
+        hero: "assets/images/hero.jpg",
+        videoPoster: "assets/images/video-poster.jpg",
+        light: "assets/images/light.jpg",
+        l: "assets/images/l.jpg"
+      },
+
+      // ===== بيانات ملف ABOUT =====
+      about: {
+        name: "MOAZYOURE",
+        interests: "Coding / Anime / Music / Design",
+        personality: "Curious, creative and always building something new.",
+        status: "ONLINE",
+        location: "EGYPT",
+        role: "CREATOR / DEVELOPER"
+      },
+
+      // ===== الاهتمامات =====
+      // الأيقونات هنا SVG وليست Emoji، ويمكن تغيير الـ icon بسهولة.
+      world: [
+        {
+          title: "CODING",
+          description: "Building ideas into interfaces, tools and digital experiences.",
+          icon: "code"
+        },
+        {
+          title: "ANIME",
+          description: "Stories, characters and psychological worlds that stay in my mind.",
+          icon: "eye"
+        },
+        {
+          title: "MUSIC",
+          description: "Soundtracks for late nights, focus sessions and quiet thoughts.",
+          icon: "music"
+        },
+        {
+          title: "DESIGN",
+          description: "Visual systems, typography, atmosphere and details.",
+          icon: "layers"
+        },
+        {
+          title: "GAMES",
+          description: "Interactive worlds, strategy and experiences worth remembering.",
+          icon: "game"
+        }
+      ],
+
+      // ===== معرض الصور =====
+      // ضع صورك بنفس الأسماء داخل assets/images أو غيّر المسارات هنا.
+      gallery: [
+        { image:"assets/images/gallery-01.jpg", title:"ARCHIVE 01", date:"2026" },
+        { image:"assets/images/gallery-02.jpg", title:"ARCHIVE 02", date:"2026" },
+        { image:"assets/images/gallery-03.jpg", title:"ARCHIVE 03", date:"2026" },
+        { image:"assets/images/gallery-04.jpg", title:"ARCHIVE 04", date:"2026" },
+        { image:"assets/images/gallery-05.jpg", title:"ARCHIVE 05", date:"2026" },
+        { image:"assets/images/gallery-06.jpg", title:"ARCHIVE 06", date:"2026" }
+      ],
+
+      // ===== الشخصيات =====
+      // هذه البيانات لا تحتوي على صور الأنمي نفسها.
+      // أنت تضع فقط الملفات التي تملك حق استخدامها.
+      minds: {
+        light: {
+          name: "LIGHT YAGAMI",
+          image: "assets/images/light.jpg",
+          description: "A fictional character represented here only as a visual reference for the site's psychological noir aesthetic."
+        },
+        l: {
+          name: "L LAWLIET",
+          image: "assets/images/l.jpg",
+          description: "A fictional character represented here only as a visual reference for the detective / investigation aesthetic."
+        }
+      },
+
+      // ===== الفيديو =====
+      video: {
+        source: "assets/video/video.mp4",
+        poster: "assets/images/video-poster.jpg"
+      },
+
+      // ===== الموسيقى =====
+      // لا يوجد تشغيل تلقائي.
+      // استبدل المسارات بملفات تملكها أو روابط مسموح بها.
+      music: [
+        {
+          title: "Track One",
+          source: "assets/music/track-01.mp3"
+        },
+        {
+          title: "Track Two",
+          source: "assets/music/track-02.mp3"
+        },
+        {
+          title: "Track Three",
+          source: "assets/music/track-03.mp3"
+        }
+      ]
+    };
+
+    /* ============================================================
+       أدوات مساعدة
+       ============================================================ */
+
+    const $ = (selector, parent = document) => parent.querySelector(selector);
+    const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
+
+    // أيقونات SVG دائرية بسيطة — لا تحتاج مكتبة خارجية.
+    const ICONS = {
+      code: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"/></svg>',
+      eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.8"/></svg>',
+      music: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z"/></svg>',
+      layers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>',
+      game: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M7 7h10a5 5 0 0 1 4.8 6.4l-1.2 4a2.7 2.7 0 0 1-4.7 1l-2.3-3.1h-3.2l-2.3 3.1a2.7 2.7 0 0 1-4.7-1l-1.2-4A5 5 0 0 1 7 7Z"/><path d="M7 11v4M5 13h4M16 12h.01M19 15h.01"/></svg>'
+    };
+
+    /* ============================================================
+       تطبيق الإعدادات على الصفحة
+       ============================================================ */
+
+    document.title = `${SITE_CONFIG.name} — Personal File`;
+
+    $("#introName").textContent = SITE_CONFIG.name;
+    $("#brandName").textContent = SITE_CONFIG.name;
+    $("#fileName").textContent = SITE_CONFIG.about.name;
+    $("#footerName").textContent = SITE_CONFIG.name;
+    $("#heroQuote").textContent = SITE_CONFIG.heroQuote;
+
+    // تقسيم اسم الـ Hero لإظهار كلمة أخيرة باللون الأحمر.
+    const nameParts = SITE_CONFIG.name.trim().split(/\s+/);
+    if (nameParts.length > 1) {
+      $("#heroName").innerHTML = `${nameParts.slice(0,-1).join(" ")} <span>${nameParts.at(-1)}</span>`;
+    } else {
+      $("#heroName").innerHTML = `<span>${SITE_CONFIG.name}</span>`;
+    }
+
+    $("#profileImage").src = SITE_CONFIG.images.profile;
+    $("#lightImage").src = SITE_CONFIG.minds.light.image;
+    $("#lImage").src = SITE_CONFIG.minds.l.image;
+    $("#lightName").textContent = SITE_CONFIG.minds.light.name;
+    $("#lName").textContent = SITE_CONFIG.minds.l.name;
+    $("#lightDescription").textContent = SITE_CONFIG.minds.light.description;
+    $("#lDescription").textContent = SITE_CONFIG.minds.l.description;
+
+    const heroBg = $("#heroBg");
+    heroBg.style.backgroundImage =
+      `linear-gradient(90deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.67) 48%,rgba(0,0,0,.9) 100%),
+       radial-gradient(circle at 68% 40%,rgba(143,23,28,.2),transparent 30%),
+       url("${SITE_CONFIG.images.hero}")`;
+
+    $("#mainVideo").poster = SITE_CONFIG.video.poster;
+    $("#mainVideo source").src = SITE_CONFIG.video.source;
+    $("#mainVideo").load();
+
+    /* ============================================================
+       بناء About
+       ============================================================ */
+    const aboutRows = [
+      ["NAME", SITE_CONFIG.about.name],
+      ["INTERESTS", SITE_CONFIG.about.interests],
+      ["PERSONALITY", SITE_CONFIG.about.personality],
+      ["STATUS", `<span class="status"><i class="status-dot"></i>${SITE_CONFIG.about.status}</span>`],
+      ["LOCATION", SITE_CONFIG.about.location],
+      ["ROLE", SITE_CONFIG.about.role]
+    ];
+
+    $("#caseList").innerHTML = aboutRows.map(([label, value]) => `
+      <div class="case-row">
+        <div class="case-label">${label}</div>
+        <div class="case-value">${value}</div>
+      </div>
+    `).join("");
+
+    /* ============================================================
+       بناء My World
+       ============================================================ */
+    $("#worldGrid").innerHTML = SITE_CONFIG.world.map((item, index) => `
+      <article class="world-card reveal delay-${Math.min(index + 1, 5)}">
+        <div class="world-index">0${index + 1} / FILE</div>
+        <div class="world-icon">${ICONS[item.icon] || ICONS.layers}</div>
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+      </article>
+    `).join("");
+
+    /* ============================================================
+       بناء Gallery
+       ============================================================ */
+    $("#galleryGrid").innerHTML = SITE_CONFIG.gallery.map((photo, index) => `
+      <figure class="photo reveal delay-${Math.min((index % 5) + 1, 5)}"
+              data-image="${photo.image}"
+              data-title="${photo.title}"
+              data-date="${photo.date}"
+              tabindex="0"
+              role="button"
+              aria-label="فتح ${photo.title}">
+        <img src="${photo.image}" alt="${photo.title}" loading="lazy"
+             onerror="this.style.opacity='0.12'">
+        <figcaption>
+          <span>${photo.title}</span>
+          <span>${photo.date}</span>
+        </figcaption>
+      </figure>
+    `).join("");
+
+    /* ============================================================
+       Music Player
+       ============================================================ */
+    const audio = $("#audio");
+    const musicBox = $("#musicBox");
+    const playBtn = $("#playBtn");
+    const progress = $("#progress");
+    const volume = $("#volume");
+    const trackTitle = $("#trackTitle");
+    const currentTimeEl = $("#currentTime");
+    const durationEl = $("#duration");
+    const playlist = $("#playlist");
+    const soundState = $("#soundState");
+
+    let currentTrack = 0;
+
+    playlist.innerHTML = SITE_CONFIG.music.map((track, index) => `
+      <button class="track" type="button" data-track="${index}">
+        <span class="track-no">0${index + 1}</span>
+        <span class="track-name-small">${track.title}</span>
+      </button>
+    `).join("");
+
+    function formatTime(seconds){
+      if (!Number.isFinite(seconds)) return "00:00";
+      const m = Math.floor(seconds / 60).toString().padStart(2,"0");
+      const s = Math.floor(seconds % 60).toString().padStart(2,"0");
+      return `${m}:${s}`;
+    }
+
+    function loadTrack(index, autoplay = false){
+      currentTrack = (index + SITE_CONFIG.music.length) % SITE_CONFIG.music.length;
+      const track = SITE_CONFIG.music[currentTrack];
+
+      audio.src = track.source;
+      audio.load();
+      trackTitle.textContent = track.title;
+      progress.value = 0;
+      currentTimeEl.textContent = "00:00";
+      durationEl.textContent = "00:00";
+
+      $$(".track").forEach((el, i) => el.classList.toggle("active", i === currentTrack));
+
+      if (autoplay) {
+        audio.play().then(() => {
+          musicBox.classList.add("playing");
+          playBtn.textContent = "Ⅱ";
+          soundState.textContent = "MUSIC ON / PLAYING";
+        }).catch(() => {
+          soundState.textContent = "SOURCE BLOCKED / CHECK MUSIC FILE";
+        });
+      }
+    }
+
+    function togglePlay(){
+      if (!audio.src) loadTrack(0, false);
+      if (audio.paused){
+        audio.play().then(() => {
+          musicBox.classList.add("playing");
+          playBtn.textContent = "Ⅱ";
+          soundState.textContent = "MUSIC ON / PLAYING";
+        }).catch(() => {
+          soundState.textContent = "SOURCE BLOCKED / CHECK MUSIC FILE";
+        });
+      } else {
+        audio.pause();
+        musicBox.classList.remove("playing");
+        playBtn.textContent = "▶";
+        soundState.textContent = "MUSIC ON / PAUSED";
+      }
+    }
+
+    playBtn.addEventListener("click", togglePlay);
+    $("#prevBtn").addEventListener("click", () => loadTrack(currentTrack - 1, true));
+    $("#nextBtn").addEventListener("click", () => loadTrack(currentTrack + 1, true));
+
+    $$(".track").forEach(button => {
+      button.addEventListener("click", () => loadTrack(Number(button.dataset.track), true));
+    });
+
+    progress.addEventListener("input", () => {
+      if (audio.duration) audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+    });
+
+    volume.addEventListener("input", () => audio.volume = Number(volume.value));
+    audio.volume = Number(volume.value);
+
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration){
+        progress.value = (audio.currentTime / audio.duration) * 100;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener("ended", () => loadTrack(currentTrack + 1, true));
+
+    audio.addEventListener("error", () => {
+      soundState.textContent = "MUSIC SOURCE NOT FOUND / ADD YOUR FILE";
+    });
+
+    loadTrack(0, false);
+
+    /* ============================================================
+       Visualizer
+       يستخدم Web Audio API عندما يبدأ المستخدم الموسيقى.
+       إذا لم يتم تشغيل موسيقى، تبقى الموجات ساكنة.
+       ============================================================ */
+    const canvas = $("#visualizer");
+    const ctx = canvas.getContext("2d");
+    let audioContext = null;
+    let analyser = null;
+    let sourceNode = null;
+    let dataArray = null;
+
+    function setupVisualizer(){
+      if (audioContext) return;
+      try{
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 128;
+        sourceNode = audioContext.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioContext.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+      }catch(error){
+        soundState.textContent = "VISUALIZER UNAVAILABLE";
+      }
+    }
+
+    audio.addEventListener("play", () => {
+      setupVisualizer();
+      if (audioContext && audioContext.state === "suspended") audioContext.resume();
+    });
+
+    function drawVisualizer(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      const width = Math.max(1, rect.width);
+      const height = Math.max(1, rect.height);
+
+      if (canvas.width !== width * dpr || canvas.height !== height * dpr){
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+      }
+
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,width,height);
+
+      let values = new Uint8Array(32);
+      if (analyser && !audio.paused){
+        analyser.getByteFrequencyData(dataArray);
+        for(let i=0;i<values.length;i++){
+          values[i] = dataArray[Math.floor(i * dataArray.length / values.length)] || 0;
+        }
+      } else {
+        values = values.map((_,i) => 5 + Math.sin(Date.now()/800 + i) * 2);
+      }
+
+      const gap = 5;
+      const barW = (width - gap * (values.length - 1)) / values.length;
+
+      values.forEach((v,i) => {
+        const barH = Math.max(3, (v / 255) * height * .72);
+        const x = i * (barW + gap);
+        const y = height - barH;
+
+        // تدرج بسيط داخل كل عمود بدل استخدام صورة.
+        const grad = ctx.createLinearGradient(0,y,0,height);
+        grad.addColorStop(0,"rgba(192,43,49,.95)");
+        grad.addColorStop(1,"rgba(192,43,49,.08)");
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(x,y,barW,barH);
+      });
+
+      requestAnimationFrame(drawVisualizer);
+    }
+    drawVisualizer();
+
+    /* ============================================================
+       Intro
+       ============================================================ */
+    $("#enterBtn").addEventListener("click", () => {
+      $("#intro").classList.add("hide");
+      document.body.classList.remove("locked");
+      setTimeout(() => $("#heroName").classList.add("visible"), 180);
+      window.scrollTo({top:0,behavior:"instant"});
+    });
+
+    /* ============================================================
+       Navigation + Mobile Menu
+       ============================================================ */
+    const nav = $("#nav");
+    const menuBtn = $("#menuBtn");
+    const navLinks = $("#navLinks");
+
+    window.addEventListener("scroll", () => {
+      nav.classList.toggle("scrolled", window.scrollY > 30);
+    }, {passive:true});
+
+    menuBtn.addEventListener("click", () => {
+      const open = navLinks.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(open));
+    });
+
+    $$("#navLinks a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded","false");
+      });
+    });
+
+    /* ============================================================
+       Scroll Reveal — Intersection Observer
+       ============================================================ */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold:.12});
+
+    $$(".reveal").forEach(el => observer.observe(el));
+
+    /* ============================================================
+       Lightbox
+       ============================================================ */
+    const lightbox = $("#lightbox");
+    const lightboxImage = $("#lightboxImage");
+
+    function openLightbox(photo){
+      lightboxImage.src = photo.dataset.image;
+      lightboxImage.alt = photo.dataset.title;
+      $("#lightboxTitle").textContent = photo.dataset.title;
+      $("#lightboxDate").textContent = photo.dataset.date;
+      lightbox.classList.add("show");
+      document.body.classList.add("locked");
+    }
+
+    function closeLightbox(){
+      lightbox.classList.remove("show");
+      document.body.classList.remove("locked");
+      setTimeout(() => lightboxImage.src = "", 250);
+    }
+
+    $$(".photo").forEach(photo => {
+      photo.addEventListener("click", () => openLightbox(photo));
+      photo.addEventListener("keydown", e => {
+        if(e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openLightbox(photo);
+        }
+      });
+    });
+
+    $("#lightboxClose").addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", e => {
+      if(e.target === lightbox) closeLightbox();
+    });
+
+    /* ============================================================
+       Easter Egg:
+       الضغط على X خمس مرات خلال فترة قصيرة يفتح الملف السري.
+       ============================================================ */
+    let secretClicks = 0;
+    let secretTimer;
+
+    $(".brand-mark").addEventListener("click", () => {
+      secretClicks++;
+      clearTimeout(secretTimer);
+      secretTimer = setTimeout(() => secretClicks = 0, 1200);
+
+      if(secretClicks >= 5){
+        secretClicks = 0;
+        $("#secret").classList.add("show");
+        document.body.classList.add("locked");
+      }
+    });
+
+    function closeSecret(){
+      $("#secret").classList.remove("show");
+      document.body.classList.remove("locked");
+    }
+    $("#closeSecret").addEventListener("click", closeSecret);
+    $("#secret").addEventListener("click", e => {
+      if(e.target === $("#secret")) closeSecret();
+    });
+
+    /* ============================================================
+       Reduce Motion
+       ============================================================ */
+    $("#motionBtn").addEventListener("click", () => {
+      document.body.classList.toggle("reduce-motion");
+    });
+
+    /* ============================================================
+       Custom Cursor — Desktop فقط
+       ============================================================ */
+    const cursor = $("#cursor");
+    const cursorRing = $("#cursorRing");
+    const finePointer = window.matchMedia("(pointer:fine)");
+
+    if(finePointer.matches){
+      document.body.classList.add("cursor-ready");
+      cursor.style.opacity = "1";
+      cursorRing.style.opacity = "1";
+
+      let mouseX = window.innerWidth/2;
+      let mouseY = window.innerHeight/2;
+      let ringX = mouseX, ringY = mouseY;
+
+      window.addEventListener("mousemove", e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        cursor.style.left = `${mouseX}px`;
+        cursor.style.top = `${mouseY}px`;
+      }, {passive:true});
+
+      function cursorLoop(){
+        ringX += (mouseX-ringX)*.18;
+        ringY += (mouseY-ringY)*.18;
+        cursorRing.style.left = `${ringX}px`;
+        cursorRing.style.top = `${ringY}px`;
+        requestAnimationFrame(cursorLoop);
+      }
+      cursorLoop();
+
+      $$("a,button,.photo,.world-card,.mind").forEach(el => {
+        el.addEventListener("mouseenter", () => cursorRing.classList.add("hover"));
+        el.addEventListener("mouseleave", () => cursorRing.classList.remove("hover"));
+      });
+
+      window.addEventListener("mousedown", () => cursorRing.classList.add("click"));
+      window.addEventListener("mouseup", () => cursorRing.classList.remove("click"));
+    }
+
+    /* ============================================================
+       Keyboard shortcuts:
+       Escape = إغلاق Lightbox / الملف السري / قائمة الهاتف
+       ============================================================ */
+    window.addEventListener("keydown", e => {
+      if(e.key === "Escape"){
+        closeLightbox();
+        closeSecret();
+        navLinks.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded","false");
+      }
+    });
+
+    /* ============================================================
+       منع أخطاء الروابط/الصور من كسر تجربة الصفحة:
+       الموقع يعمل حتى لو لم توجد بعض الملفات، لكن سيظهر placeholder
+       الداكن بدل الصورة.
+       ============================================================ */
+  </script>
+</body>
+</html>
